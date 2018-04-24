@@ -5,14 +5,17 @@ var modal = {
 	days : 12 ,
 
 	students : ['Slappy the Frog','Lilly the Lizard','Paulrus the Walrus',
-		'Gregory the Goat','Adam the Anaconda']
+		'Gregory the Goat','Adam the Anaconda'],
+
+	lstorage : 88
 
 };
 
 var control = {
-	tableContent : function(){
-		view.pageStracture(
-			modal.students
+	table : function(){
+		view.pageStructure(
+			modal.students ,
+			modal.days
 		);
 	}
 
@@ -21,16 +24,24 @@ var control = {
 
 var view = {
 
-	pageStracture : function(student){
+	pageStructure : function(student , days){
+
 		let table = document.createElement('table'),
 			thead = document.createElement('thead'),
-			tbody = document.createElement('tbody');
-            
-		document.body.appendChild(table);
-            
-		for(let i = 0 ; i < 5 ; i++){//rows
+			tbody = document.createElement('tbody'),
+			h1 = document.createElement('h1');
+			
+		h1.textContent='Udacity Attendance';
+		document.body.prepend(table);
+		document.body.prepend(h1);
+			
+		
+
+		for(let i = 0 ; i < student.length ; i++){//rows
+
 			let tr = document.createElement('tr'),
 				trhead = document.createElement('tr');
+
 
 			if(i==0){
 				table.appendChild(thead);
@@ -38,21 +49,24 @@ var view = {
 				table.appendChild(tbody);
 			}
 
+
 			tbody.appendChild(tr);
             
 
+			for (let s=0 ; s < days ; s++){//cols
 
-			for (let s=0 ; s < 12 ; s++){//cols
 				let td = document.createElement('td'),
 					th = document.createElement('th'),
-					tdhead = document.createElement('td'),
 					thhead = document.createElement('th'),
 					input = document.createElement('input');
 
 				input.setAttribute('type','checkbox');
                     
 				if(s==0){
+					let thhead = document.createElement('th');
+
 					th.textContent=student[i];
+					th.style.color='yellow';
 					tr.appendChild(th);
                     
 					thhead.textContent='Student Name';
@@ -62,12 +76,19 @@ var view = {
 				td.appendChild(input);
 				tr.appendChild(td);
                 
-				tdhead.textContent= s+1 ;
-				trhead.appendChild(tdhead);
+				thhead.textContent= s+1 ;
+				trhead.appendChild(thhead);
                 
 				if(s==11){
-					th.textContent=0;
-					tr.appendChild(th);
+
+					let thhead = document.createElement('th'),
+						td = document.createElement('td');
+
+					thhead.setAttribute('class','missed-col');
+					td.setAttribute('class','missed-col');
+
+					td.textContent=0;
+					tr.appendChild(td);
                     
 					thhead.textContent='Days Missed-col';
 					trhead.appendChild(thhead);
@@ -86,7 +107,7 @@ var view = {
 
 
 
-control.tableContent();
+control.table();
 
 
 
