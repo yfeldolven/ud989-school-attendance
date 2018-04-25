@@ -17,6 +17,18 @@ var control = {
 			modal.students ,
 			modal.days
 		);
+	},
+
+
+	addName : function(newStd){
+		modal.students.push(newStd);
+		view.appendName(newStd);
+	},
+
+
+	render : function(){
+		this.table();
+		view.addName();
 	}
 
 };
@@ -25,7 +37,6 @@ var control = {
 var view = {
 
 	pageStructure : function(student , days){
-
 		let table = document.createElement('table'),
 			thead = document.createElement('thead'),
 			tbody = document.createElement('tbody'),
@@ -37,7 +48,7 @@ var view = {
 			
 		
 
-		for(let i = 0 ; i < student.length ; i++){//rows
+		for(let i = 0 ; i < student.length ; i++){
 
 			let tr = document.createElement('tr'),
 				trhead = document.createElement('tr');
@@ -53,15 +64,19 @@ var view = {
 			tbody.appendChild(tr);
             
 
-			for (let s=0 ; s < days ; s++){//cols
+			for (let s=0 ; s < days ; s++){
 
 				let td = document.createElement('td'),
 					th = document.createElement('th'),
 					thhead = document.createElement('th'),
 					input = document.createElement('input');
 
+
+				
 				input.setAttribute('type','checkbox');
-                    
+				   
+				
+
 				if(s==0){
 					let thhead = document.createElement('th');
 
@@ -73,12 +88,16 @@ var view = {
 					trhead.appendChild(thhead);
 				}
 
+
+
 				td.appendChild(input);
 				tr.appendChild(td);
                 
 				thhead.textContent= s+1 ;
 				trhead.appendChild(thhead);
-                
+				
+				
+
 				if(s==11){
 
 					let thhead = document.createElement('th'),
@@ -93,10 +112,55 @@ var view = {
 					thhead.textContent='Days Missed-col';
 					trhead.appendChild(thhead);
 				}
+
+
+
 			}
         
 		}
         
+	},
+
+
+
+	addName : function(){
+		let input = document.createElement('input'),
+			submit = document.createElement('input');
+
+		input.setAttribute('type','input');
+		submit.setAttribute('type','button');
+		submit.setAttribute('value','Add New Student');
+
+		document.body.prepend(submit);
+		document.body.prepend(input);
+
+
+		submit.onclick = function(){
+			if(input.value != ''){
+				control.addName(
+					input.value 
+				);
+
+				input.value = '';
+
+			}
+		};
+	},
+
+
+
+	appendName: function(student){
+		let getTr = document.getElementsByTagName('tr'),
+			newTr = getTr[getTr.length-1].cloneNode(true),
+			table = document.getElementsByTagName('table')[0];
+
+		newTr.firstChild.textContent = student ;
+
+		for (var k=1 ;k< newTr.children.length-1 ; k++){
+			newTr.children[k].children[0].checked=false;
+		}
+
+		table.appendChild(newTr);
 	},
     
 
@@ -107,7 +171,7 @@ var view = {
 
 
 
-control.table();
+control.render();
 
 
 
@@ -120,87 +184,87 @@ control.table();
 
 
 
-/* STUDENTS IGNORE THIS FUNCTION
- * All this does is create an initial
- * attendance record if one is not found
- * within localStorage.
- */
-(function() {
-	if (!localStorage.attendance) {
-		console.log('Creating attendance records...');
-		function getRandom() {
-			return (Math.random() >= 0.5);
-		}
+// /* STUDENTS IGNORE THIS FUNCTION
+//  * All this does is create an initial
+//  * attendance record if one is not found
+//  * within localStorage.
+//  */
+// (function() {
+// 	if (!localStorage.attendance) {
+// 		console.log('Creating attendance records...');
+// 		function getRandom() {
+// 			return (Math.random() >= 0.5);
+// 		}
 
-		var nameColumns = $('tbody .name-col'),
-			attendance = {};
+// 		var nameColumns = $('tbody .name-col'),
+// 			attendance = {};
 
-		nameColumns.each(function() {
-			var name = this.innerText;
-			attendance[name] = [];
+// 		nameColumns.each(function() {
+// 			var name = this.innerText;
+// 			attendance[name] = [];
 
-			for (var i = 0; i <= 11; i++) {
-				attendance[name].push(getRandom());
-			}
-		});
+// 			for (var i = 0; i <= 11; i++) {
+// 				attendance[name].push(getRandom());
+// 			}
+// 		});
 
-		localStorage.attendance = JSON.stringify(attendance);
-	}
-}());
+// 		localStorage.attendance = JSON.stringify(attendance);
+// 	}
+// }());
 
 
-/* STUDENT APPLICATION */
-$(function() {
-	var attendance = JSON.parse(localStorage.attendance),
-		$allMissed = $('tbody .missed-col'),
-		$allCheckboxes = $('tbody input');
+// /* STUDENT APPLICATION */
+// $(function() {
+// 	var attendance = JSON.parse(localStorage.attendance),
+// 		$allMissed = $('tbody .missed-col'),
+// 		$allCheckboxes = $('tbody input');
 
-	// Count a student's missed days
-	function countMissing() {
-		$allMissed.each(function() {
-			var studentRow = $(this).parent('tr'),
-				dayChecks = $(studentRow).children('td').children('input'),
-				numMissed = 0;
+// 	// Count a student's missed days
+// 	function countMissing() {
+// 		$allMissed.each(function() {
+// 			var studentRow = $(this).parent('tr'),
+// 				dayChecks = $(studentRow).children('td').children('input'),
+// 				numMissed = 0;
 
-			dayChecks.each(function() {
-				if (!$(this).prop('checked')) {
-					numMissed++;
-				}
-			});
+// 			dayChecks.each(function() {
+// 				if (!$(this).prop('checked')) {
+// 					numMissed++;
+// 				}
+// 			});
 
-			$(this).text(numMissed);
-		});
-	}
+// 			$(this).text(numMissed);
+// 		});
+// 	}
 
-	// Check boxes, based on attendace records
-	$.each(attendance, function(name, days) {
-		var studentRow = $('tbody .name-col:contains("' + name + '")').parent('tr'),
-			dayChecks = $(studentRow).children('.attend-col').children('input');
+// 	// Check boxes, based on attendace records
+// 	$.each(attendance, function(name, days) {
+// 		var studentRow = $('tbody .name-col:contains("' + name + '")').parent('tr'),
+// 			dayChecks = $(studentRow).children('.attend-col').children('input');
 
-		dayChecks.each(function(i) {
-			$(this).prop('checked', days[i]);
-		});
-	});
+// 		dayChecks.each(function(i) {
+// 			$(this).prop('checked', days[i]);
+// 		});
+// 	});
 
-	// When a checkbox is clicked, update localStorage
-	$allCheckboxes.on('click', function() {
-		var studentRows = $('tbody .student'),
-			newAttendance = {};
+// 	// When a checkbox is clicked, update localStorage
+// 	$allCheckboxes.on('click', function() {
+// 		var studentRows = $('tbody .student'),
+// 			newAttendance = {};
 
-		studentRows.each(function() {
-			var name = $(this).children('.name-col').text(),
-				$allCheckboxes = $(this).children('td').children('input');
+// 		studentRows.each(function() {
+// 			var name = $(this).children('.name-col').text(),
+// 				$allCheckboxes = $(this).children('td').children('input');
 
-			newAttendance[name] = [];
+// 			newAttendance[name] = [];
 
-			$allCheckboxes.each(function() {
-				newAttendance[name].push($(this).prop('checked'));
-			});
-		});
+// 			$allCheckboxes.each(function() {
+// 				newAttendance[name].push($(this).prop('checked'));
+// 			});
+// 		});
 
-		countMissing();
-		localStorage.attendance = JSON.stringify(newAttendance);
-	});
+// 		countMissing();
+// 		localStorage.attendance = JSON.stringify(newAttendance);
+// 	});
 
-	countMissing();
-}());
+// 	countMissing();
+// }());
