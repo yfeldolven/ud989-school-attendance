@@ -4,31 +4,116 @@ var modal = {
 
 	days : 12 ,
 
-	students : ['Slappy the Frog','Lilly the Lizard','Paulrus the Walrus',
-		'Gregory the Goat','Adam the Anaconda'],
+	students :[
+		{
+			name : 'Slappy the Frog' ,
+			checked : [],
+			missed : 12
 
-	lstorage : 88
+		},
+		{
+			name : 'Lilly the Lizard' ,
+			checked : [],
+			missed : 12
+
+		},
+		{
+			name : 'Paulrus the Walrus',
+			checked : [],
+			missed : 12
+		},
+		{
+			name : 'Gregory the Goat',
+			checked : [],
+			missed : 12
+		},
+		{
+			name : 'Adam the Anaconda',
+			checked : [],
+			missed : 12
+		}
+	]
+	
 
 };
 
 var control = {
+
+
+	lstorage: {
+		start : function(){
+			if (!localStorage.attendance){
+				localStorage.attendance = JSON.stringify(modal);
+			} else {
+				modal = JSON.parse(localStorage.attendance);
+			}
+		},
+		
+		add : function(){
+			localStorage.attendance = JSON.stringify(modal) ;
+		}
+	},
+
+
+	data:{
+		add : function(days , checked , i , s ){
+			modal.days = days ;
+	
+			modal.students[i].checked[s] = checked ;
+			
+			
+			modal.students[i].missed=12;
+			for (let d=0 ; d<=modal.students[i].checked.length ; d++ ){
+				if(modal.students[i].checked[d]==true){
+					modal.students[i].missed-- ;
+				}
+			}
+		},
+		
+		get:function(call , i){
+			switch(call){
+			case 1 :
+				return modal.days ;
+				break;
+			case 2 :
+				return modal.students[i].checked;
+				break;
+			case 3 :
+				return modal.students[i].missed;
+				break;
+			default : 
+				console.log('error');
+			}
+		}
+	},
+	
+
+
 	table : function(){
 		view.pageStructure(
-			modal.students ,
-			modal.days
+			modal.students,
+			modal.days ,
+			modal.students
 		);
 	},
 
 
 	addName : function(newStd){
-		modal.students.push(newStd);
+		modal.students.push({
+			name : newStd ,
+			checked : [],
+			missed : 12
+		});
 		view.appendName(newStd);
+		control.lstorage.add();
 	},
 
 
 	render : function(){
 		this.table();
 		view.addName();
+		//this.lstorage.start();
+
 	}
 
 };
@@ -36,7 +121,7 @@ var control = {
 
 var view = {
 
-	pageStructure : function(student , days){
+	pageStructure : function(student , days , missed){
 		let table = document.createElement('table'),
 			thead = document.createElement('thead'),
 			tbody = document.createElement('tbody'),
@@ -73,14 +158,13 @@ var view = {
 
 
 				
-				input.setAttribute('type','checkbox');
-				   
+				input.setAttribute('type','checkbox');		   
 				
 
 				if(s==0){
 					let thhead = document.createElement('th');
 
-					th.textContent=student[i];
+					th.textContent=student[i].name;
 					th.style.color='yellow';
 					tr.appendChild(th);
                     
@@ -106,10 +190,10 @@ var view = {
 					thhead.setAttribute('class','missed-col');
 					td.setAttribute('class','missed-col');
 
-					td.textContent=0;
+					td.textContent = missed[i].missed ;
 					tr.appendChild(td);
                     
-					thhead.textContent='Days Missed-col';
+					thhead.textContent = 'Days Missed-col';
 					trhead.appendChild(thhead);
 				}
 
@@ -162,6 +246,33 @@ var view = {
 
 		table.appendChild(newTr);
 	},
+
+
+
+	missedDays: function(){
+		let tr = document.getElementsByTagName('tr');
+
+		for (let t=1 ; t<6 ; t++){
+			let td = tr[t] ;
+			for(let it =1 ; it<13 ; it++){
+				td.children[it].children[0].onclick = function(){
+					control.data.add(
+						12,
+						td.children[it].children[0].checked,
+						t-1 ,
+						it-1
+					);
+					td.lastChild.textContent = control.data.get(3,t-1) ;
+				};
+			}
+		}
+			
+
+	},
+
+
+
+
     
 
 	render : function(){
@@ -172,6 +283,7 @@ var view = {
 
 
 control.render();
+view.missedDays();
 
 
 
@@ -182,13 +294,11 @@ control.render();
 
 
 
-
-
-// /* STUDENTS IGNORE THIS FUNCTION
-//  * All this does is create an initial
-//  * attendance record if one is not found
-//  * within localStorage.
-//  */
+/* STUDENTS IGNORE THIS FUNCTION
+ * All this does is create an initial
+ * attendance record if one is not found
+ * within localStorage.
+ */
 // (function() {
 // 	if (!localStorage.attendance) {
 // 		console.log('Creating attendance records...');
@@ -242,7 +352,7 @@ control.render();
 // 			dayChecks = $(studentRow).children('.attend-col').children('input');
 
 // 		dayChecks.each(function(i) {
-// 			$(this).prop('checked', days[i]);
+// 			$(this).prop('checked', days[i] ); 
 // 		});
 // 	});
 
