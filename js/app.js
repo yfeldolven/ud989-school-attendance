@@ -69,6 +69,20 @@ var control = {
 				}
 			}
 		},
+
+		checked : function(){
+			let tr = document.getElementsByTagName('tr');
+
+			for (let Tr=1 ; Tr<=modal.students.length ; Tr++){
+				let td = tr[Tr] ;
+				for(let Td =1 ; Td<=modal.days ; Td++){
+
+					td.children[Td].children[0].checked =
+						control.data.get(2,Tr-1)[Td-1] ;
+				}
+			}
+			
+		},
 		
 		get:function(call , i){
 			switch(call){
@@ -114,6 +128,7 @@ var control = {
 		this.lstorage.start();
 		this.table();
 		view.addName();
+		this.data.checked();
 		view.missedDays(modal.students , modal.days );
 	}
 
@@ -122,7 +137,7 @@ var control = {
 
 var view = {
 
-	pageStructure : function(student , days , missed){
+	pageStructure : function(student , days , missed ){
 		let table = document.createElement('table'),
 			thead = document.createElement('thead'),
 			tbody = document.createElement('tbody'),
@@ -159,7 +174,7 @@ var view = {
 
 
 				
-				input.setAttribute('type','checkbox');		   
+				input.setAttribute('type','checkbox');	   
 				
 
 				if(s==0){
@@ -256,6 +271,10 @@ var view = {
 		for (let Tr=1 ; Tr<=student.length ; Tr++){
 			let td = tr[Tr] ;
 			for(let Td =1 ; Td<=days ; Td++){
+
+				td.children[Td].children[0].checked =
+				control.data.get(2,Tr-1)[Td-1] ;
+
 				td.children[Td].children[0].onclick = function(){
 					control.data.add(
 						12,
