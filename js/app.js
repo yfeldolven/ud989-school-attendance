@@ -63,8 +63,8 @@ var control = {
 			
 			
 			modal.students[i].missed=12;
-			for (let d=0 ; d<=modal.students[i].checked.length ; d++ ){
-				if(modal.students[i].checked[d]==true){
+			for (let st=0 ; st<=modal.students[i].checked.length ; st++ ){
+				if(modal.students[i].checked[st]===true){
 					modal.students[i].missed-- ;
 				}
 			}
@@ -106,14 +106,15 @@ var control = {
 		});
 		view.appendName(newStd);
 		control.lstorage.add();
+		view.missedDays(modal.students , modal.days);
 	},
 
 
 	render : function(){
+		this.lstorage.start();
 		this.table();
 		view.addName();
-		//this.lstorage.start();
-
+		view.missedDays(modal.students , modal.days );
 	}
 
 };
@@ -240,8 +241,8 @@ var view = {
 
 		newTr.firstChild.textContent = student ;
 
-		for (var k=1 ;k< newTr.children.length-1 ; k++){
-			newTr.children[k].children[0].checked=false;
+		for (var a=1 ;a< newTr.children.length-1 ; a++){
+			newTr.children[a].children[0].checked=false;
 		}
 
 		table.appendChild(newTr);
@@ -249,20 +250,21 @@ var view = {
 
 
 
-	missedDays: function(){
+	missedDays: function(student , days){
 		let tr = document.getElementsByTagName('tr');
 
-		for (let t=1 ; t<6 ; t++){
-			let td = tr[t] ;
-			for(let it =1 ; it<13 ; it++){
-				td.children[it].children[0].onclick = function(){
+		for (let Tr=1 ; Tr<=student.length ; Tr++){
+			let td = tr[Tr] ;
+			for(let Td =1 ; Td<=days ; Td++){
+				td.children[Td].children[0].onclick = function(){
 					control.data.add(
 						12,
-						td.children[it].children[0].checked,
-						t-1 ,
-						it-1
+						td.children[Td].children[0].checked,
+						Tr-1 ,
+						Td-1
 					);
-					td.lastChild.textContent = control.data.get(3,t-1) ;
+					td.lastChild.textContent = control.data.get(3,Tr-1) ;
+					control.lstorage.add();
 				};
 			}
 		}
@@ -283,8 +285,6 @@ var view = {
 
 
 control.render();
-view.missedDays();
-
 
 
 
