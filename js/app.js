@@ -105,6 +105,19 @@ var control = {
 	clickEvents : function(){
 		document.addEventListener('click' , function(e){
 
+			if( e.target.className === 'add student'){
+
+				if( modal.students.length === 0 && e.target.nextSibling.nextSibling.children[0]=== undefined ){
+					window.location.reload() ;
+				}
+
+				control.addName(
+					e.target.previousSibling.value ,
+					modal.days
+				)
+				
+			}
+
 			if( e.target.className === 'material-icons edit' ){
 				let Target = e.target.parentElement.parentElement.parentElement;
 
@@ -163,15 +176,15 @@ var control = {
 	},
 
 
-	addName : function(newStd){
+	addName : function(newStd , days){
 		
 		modal.students.push({
 			name : newStd ,
 			checked : [],
-			missed : 12
+			missed : days
 		});
 
-		view.appendName(newStd);
+		view.appendName(newStd , days);
 		control.lstorage.add();
 		view.missedDays(modal.students , modal.days);
 	},
@@ -288,28 +301,18 @@ var view = {
 			submit = document.createElement('input');
 
 		input.setAttribute('type','input');
+		submit.className= 'add student' ;
 		submit.setAttribute('type','button');
 		submit.setAttribute('value','Add New Student');
 
 		document.body.prepend(submit);
 		document.body.prepend(input);
 
-
-		submit.onclick = function(){
-			if(input.value != ''){
-				control.addName(
-					input.value 
-				);
-
-				input.value = '';
-
-			}
-		};
 	},
 
 
 
-	appendName: function(student){
+	appendName: function(student , days){
 
 		let table = document.querySelector('TABLE'),
 			tr = document.createElement('tr') ,
@@ -322,7 +325,7 @@ var view = {
 		th.appendChild( this.buttons() );
 		tr.appendChild(th);
 
-		for (var a=0 ;a< 12 ; a++){
+		for (var a=0 ;a< days ; a++){
 			let td = document.createElement('td'),
 				input = document.createElement('input');
 
@@ -331,7 +334,7 @@ var view = {
 			tr.appendChild(td);
 		}
 
-		td.textContent= 12;
+		td.textContent= days;
 		td.className = 'missed-col' ;
 
 		tr.appendChild(td);
