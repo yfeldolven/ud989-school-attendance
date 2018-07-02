@@ -105,13 +105,42 @@ var control = {
 	clickEvents : function(){
 		document.addEventListener('click' , function(e){
 
-			if( e.target.className === 'edit' ){
+			if( e.target.className === 'material-icons edit' ){
+				let Target = e.target.parentElement.parentElement.parentElement;
 
+				e.target.parentElement.parentElement.replaceWith(
+					view.inputElement(
+						e.target.parentElement.parentElement.parentElement ,
+						modal.students[ view.delete(e.target.parentElement.parentElement.parentElement)-1 ].name
+						)
+				);
+
+			Target.children[0].focus();
+			
 			}
 
 
 			if( e.target.className == 'material-icons close' ){
-				control.delete( view.delete( e ) );
+
+				control.delete(
+					 view.delete( e.target.parentElement.parentElement.parentElement , 'delete' ) );
+				control.lstorage.add();
+			}
+
+		});
+	},
+
+	keyupEvents : function(){
+		document.addEventListener( 'keyup' , function(e){
+
+			if(e.target.id === 'close' && e.keyCode === 13 ){
+
+				modal.students[ view.delete( e.target.parentElement )-1 ].name = e.target.value ;
+
+				e.target.replaceWith(
+					 view.editSudentName( e.target.value )
+				);
+
 				control.lstorage.add();
 			}
 
@@ -135,11 +164,13 @@ var control = {
 
 
 	addName : function(newStd){
+		
 		modal.students.push({
 			name : newStd ,
 			checked : [],
 			missed : 12
 		});
+
 		view.appendName(newStd);
 		control.lstorage.add();
 		view.missedDays(modal.students , modal.days);
@@ -152,8 +183,8 @@ var control = {
 		view.addName();
 		this.data.checked();
 		view.missedDays(modal.students , modal.days );
-		view.addButtons();
 		this.clickEvents();
+		this.keyupEvents();
 	}
 
 };
@@ -210,6 +241,7 @@ var view = {
 
 					th.textContent=student[i].name;
 					th.style.color='yellow';
+					th.appendChild( view.buttons() );
 					tr.appendChild(th);
                     
 					thhead.textContent='Student Name';
@@ -296,19 +328,6 @@ var view = {
 	},
 
 
-
-	addButtons : function (){
-
-		let students = document.querySelectorAll('TABLE TR') ;
-		
-		for (let i=1 ; i < students.length ; i++){
-
-			students[i].children[0].appendChild( this.buttons() );
-
-		}
-	},
-
-
 	buttons : function(){
 		let spanDelete = document.createElement('SPAN') , 
 		spanEdit = document.createElement('SPAN') ,
@@ -327,23 +346,50 @@ var view = {
 	},
 
 
-	delete : function(e){
+	delete : function( e , Delete ){
 
 		let tr = document.querySelectorAll('TABLE TR') ,
-			Target = e.target.parentElement.parentElement.parentElement ,
 			num = 0 ;
 
 		for(let i=0 ; i<tr.length ; i++){
 
-			if( Target === tr[i] ){
+			if( e === tr[i] ){
 
 				num = i ;
 	
 			}
 		}
 
-		Target.remove();
+		if( Delete ){
+			e.remove();
+		}
+
 		return num ;
+	},
+
+
+	editSudentName: function( name ){
+		let th = document.createElement('TH');
+
+		th.textContent = name ;
+		th.style.color='yellow';
+
+		th.appendChild ( view.buttons() );
+
+
+		return th;
+	},
+
+
+	inputElement : function( parent , value ){
+		let input = document.createElement('INPUT');
+
+		input.setAttribute( 'type' , 'text' );
+		input.setAttribute('id' , 'close');
+		input.setAttribute( 'value' , value );
+		
+		return parent.appendChild(input);
+
 	},
 
 
