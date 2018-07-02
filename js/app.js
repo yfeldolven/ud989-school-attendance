@@ -116,7 +116,7 @@ var control = {
 				);
 
 			Target.children[0].focus();
-			
+
 			}
 
 
@@ -310,20 +310,32 @@ var view = {
 
 
 	appendName: function(student){
-		let getTr = document.getElementsByTagName('tr'),
-			newTr = getTr[getTr.length-1].cloneNode(true),
-			table = document.getElementsByTagName('table')[0];
+
+		let table = document.querySelector('TABLE'),
+			tr = document.createElement('tr') ,
+			th = document.createElement('th') ,
+			td = document.createElement('td') ;
 		
+		th.textContent = student ;
+		th.style.color = 'yellow ';
 
-		newTr.firstChild.textContent = student ;
+		th.appendChild( this.buttons() );
+		tr.appendChild(th);
 
-		for (var a=1 ;a< newTr.children.length-1 ; a++){
-			newTr.children[a].children[0].checked=false;
+		for (var a=0 ;a< 12 ; a++){
+			let td = document.createElement('td'),
+				input = document.createElement('input');
+
+			input.setAttribute('type', 'checkbox');
+			td.appendChild(input);
+			tr.appendChild(td);
 		}
 
+		td.textContent= 12;
+		td.className = 'missed-col' ;
 
-		newTr.children[0].appendChild( this.buttons() );
-		table.appendChild(newTr);
+		tr.appendChild(td);
+		table.appendChild(tr);
 		
 	},
 
