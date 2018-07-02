@@ -4,6 +4,7 @@ body {
 }
 
 th {
+    position: relative;
     background-color: #001f3f;
     color: #fff;
     padding: 0.5em 1em;
@@ -31,4 +32,20 @@ td.missed-col {
 
 .name-col {
     text-align: left;
+}
+
+span.edit {
+    color: yellow;
+    margin: 0 5px;
+}
+
+.close {
+    color: red;
+}
+
+
+tr th span {
+    float: right;
+    top: 0;
+    right : 0;
 }

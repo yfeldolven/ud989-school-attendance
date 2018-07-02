@@ -100,6 +100,28 @@ var control = {
 			}
 		}
 	},
+
+
+	clickEvents : function(){
+		document.addEventListener('click' , function(e){
+
+			if( e.target.className === 'edit' ){
+
+			}
+
+
+			if( e.target.className == 'material-icons close' ){
+				control.delete( view.delete( e ) );
+				control.lstorage.add();
+			}
+
+		});
+	},
+
+
+	delete : function( num ){
+		modal.students.splice( num-1 , 1 );
+	},
 	
 
 
@@ -130,9 +152,15 @@ var control = {
 		view.addName();
 		this.data.checked();
 		view.missedDays(modal.students , modal.days );
+		view.addButtons();
+		this.clickEvents();
 	}
 
 };
+
+
+
+
 
 
 var view = {
@@ -253,6 +281,7 @@ var view = {
 		let getTr = document.getElementsByTagName('tr'),
 			newTr = getTr[getTr.length-1].cloneNode(true),
 			table = document.getElementsByTagName('table')[0];
+		
 
 		newTr.firstChild.textContent = student ;
 
@@ -260,7 +289,61 @@ var view = {
 			newTr.children[a].children[0].checked=false;
 		}
 
+
+		newTr.children[0].appendChild( this.buttons() );
 		table.appendChild(newTr);
+		
+	},
+
+
+
+	addButtons : function (){
+
+		let students = document.querySelectorAll('TABLE TR') ;
+		
+		for (let i=1 ; i < students.length ; i++){
+
+			students[i].children[0].appendChild( this.buttons() );
+
+		}
+	},
+
+
+	buttons : function(){
+		let spanDelete = document.createElement('SPAN') , 
+		spanEdit = document.createElement('SPAN') ,
+		span = document.createElement('SPAN');
+
+	spanEdit.classList.add('material-icons','edit');
+	spanEdit.textContent = 'create' ;
+
+	spanDelete.classList.add('material-icons','close');
+	spanDelete.textContent = 'clear' ;
+
+	span.appendChild(spanDelete);
+	span.appendChild(spanEdit);
+
+	return span;
+	},
+
+
+	delete : function(e){
+
+		let tr = document.querySelectorAll('TABLE TR') ,
+			Target = e.target.parentElement.parentElement.parentElement ,
+			num = 0 ;
+
+		for(let i=0 ; i<tr.length ; i++){
+
+			if( Target === tr[i] ){
+
+				num = i ;
+	
+			}
+		}
+
+		Target.remove();
+		return num ;
 	},
 
 
@@ -291,16 +374,11 @@ var view = {
 
 	},
 
-
-
-
     
 
 	render : function(){
 	}
 };
-
-
 
 
 control.render();
